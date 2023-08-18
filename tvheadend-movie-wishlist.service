@@ -1,0 +1,10 @@
+[Unit]
+Description=automatically recording wanted movies
+
+[Service]
+Type=simple
+ExecStart=/path/to/tvheadend-movie-wishlist/wishlist/main.py
+WorkingDirectory=/path/to/tvheadend-movie-wishlist
+
+[Install]
+WantedBy=timers.target

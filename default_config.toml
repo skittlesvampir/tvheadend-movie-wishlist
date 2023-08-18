@@ -1,0 +1,23 @@
+# copy this file to config.toml like this:
+# cp default_config.toml config.toml
+
+language = 'en-US' # set to the language of your EPG data
+
+[tvheadend]
+server = "https://tv.head.end:9981" # no trailing slash
+username = "admin"
+password = "yourpassword"
+config = "recordedbymoviewishlist" # name of the recording configuration
+
+# Create an API token under: https://www.themoviedb.org/settings/api
+[themoviedb]
+api_read_access_token = "abcd1234" # available under above link
+user_session_id = "abcd1234" # this session id can be generated with 'tools/generate_user_session_id.py'
+list_id = 123456 # create a list under: https://www.themoviedb.org/u/dbcorrector/lists
+
+[ntfy]
+enabled = false
+channel_url = "https://ntfy.sh/send_me_a_thank_you" # replace with your own
+authenticated = false # use authentication if you don't want others to be able to see your movies
+username = "AzureDiamond"
+password = "hunter2"

@@ -1,0 +1,3 @@
+config.toml
+.ignored_events
+__pycache__

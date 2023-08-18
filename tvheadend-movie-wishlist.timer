@@ -1,0 +1,12 @@
+# This timer is configured run everyday at 1:00 AM. If you'd like to change
+# this behaviour, see systemd.time(7) for more information.
+
+[Unit]
+Description=automatically recording wanted movies
+
+[Timer]
+OnCalendar=*-*-* 1:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
