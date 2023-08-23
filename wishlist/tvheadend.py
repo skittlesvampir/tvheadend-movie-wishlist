@@ -69,11 +69,11 @@ def get_dvr_config_uuid(name):
 # because it uses internal data structures. I have reverse-engineered it
 # from the webui. Although I will update it when necessary, I would appreciate
 # a more robust solution for tweaking recording paddings.
-def add_padding_to_recording(uuid, start, stop):
+def add_padding_and_year_to_recording(uuid, start, stop):
     data = {
         "uuid": uuid,
         "grid": 1,
-        "list": "enabled,disp_title,disp_extratext,channel,start,start_extra,stop,stop_extra,pri,config_name,comment,episode_disp,owner,creator,retention,removal",
+        "list": "enabled,copyright_year,disp_title,disp_extratext,channel,start,start_extra,stop,stop_extra,pri,config_name,comment,episode_disp,owner,creator,retention,removal",
     }
     ts_response = ts_make_request('api/idnode/load',ts_data=data,ts_method='POST')
     idnode_before = json.loads(ts_response.text)["entries"][0]
@@ -98,6 +98,12 @@ def add_padding_to_recording(uuid, start, stop):
         "removal": idnode_before["removal"],
         "retention": idnode_before["retention"],
     }
+
+    if "copyright_year" in idnode_before:
+        if idnode_before["copyright_year"] >= 0:
+            disp_title = idnode_after["disp_title"]
+            year = idnode_before["copyright_year"]
+            idnode_after["disp_title"] = f"{disp_title} ({year})"
     
     data = {
         "node": json.dumps(idnode_after),
@@ -105,7 +111,6 @@ def add_padding_to_recording(uuid, start, stop):
     
     ts_make_request('api/idnode/save',ts_data=data,ts_method='POST')
     return
-
 
 def schedule_recording(programming):
     possible_paddings = [20,15,10,5,4,3,2,1]
@@ -135,7 +140,7 @@ def schedule_recording(programming):
     ts_response = ts_make_request('api/dvr/entry/create_by_event',ts_data=data,ts_method='POST')
     recording_uuid = json.loads(ts_response.text)["uuid"]
     
-    add_padding_to_recording(recording_uuid, start, stop)
+    add_padding_and_year_to_recording(recording_uuid, start, stop)
     
     return (True, start, stop)
     
