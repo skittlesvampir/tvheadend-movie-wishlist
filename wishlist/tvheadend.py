@@ -113,7 +113,7 @@ def add_padding_and_year_to_recording(uuid, start, stop):
     return
 
 def schedule_recording(programming):
-    possible_paddings = [20,15,10,5,4,3,2,1]
+    possible_paddings = [15,10,5,4,3,2,1]
 
     for padding in possible_paddings: # 20 to 5
         if is_block_empty(programming["start"] - padding*60, programming["stop"]):
