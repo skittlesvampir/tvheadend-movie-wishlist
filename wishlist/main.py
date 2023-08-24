@@ -19,7 +19,7 @@ if __name__ == '__main__':
         os.mknod(ignored_events_filename)
     ignored_events_file_handle = open(ignored_events_filename, "w+")
     ignored_events = [x.strip() for x in ignored_events_file_handle.readlines()]
-        
+
     for movie in tmdb_movie_list:
         movie_norm = movie["normalized_title"]
         movie_pretty = movie["title"]

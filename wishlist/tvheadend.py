@@ -145,7 +145,7 @@ def schedule_recording(programming):
     return (True, start, stop)
     
 def ts_retrieve_movie_list():
-    ts_response = ts_make_request('api/epg/events/grid?limit=10000',ts_method='GET').text
+    ts_response = ts_make_request('api/epg/events/grid?limit=30000',ts_method='GET').text
 
     ts_movie_list = json.loads(ts_response)["entries"]
     ts_movie_list = remove_non_movies_tvheadend(ts_movie_list)
