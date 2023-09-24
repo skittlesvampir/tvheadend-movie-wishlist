@@ -153,3 +153,7 @@ def ts_retrieve_movie_list():
         ts_movie_list[i]["normalized_title"] = normalize_title(ts_movie_list[i]["title"])
     
     return ts_movie_list
+
+def get_image_url(source):
+    if "https://ondemo.tmsimg.com/assets" in source:
+        return source.split("?")[0]

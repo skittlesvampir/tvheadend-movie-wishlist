@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 import os
 from pathlib import Path
+from datetime import datetime
 
 from ntfy import send_notification
 from tvheadend import schedule_recording, ts_make_request
-from tvheadend import ts_retrieve_movie_list
+from tvheadend import ts_retrieve_movie_list, get_image_url
 from util import retrieve_tmdb_list
 
 if __name__ == '__main__':
@@ -33,9 +34,10 @@ if __name__ == '__main__':
                     if success:
                         image = None
                         if 'image' in programming:
-                            image=programming['image']
+                            image = get_image_url(programming['image'])
 
-                        send_notification(f"Scheduled movie {movie_pretty} with {extra_start} minutes before and {extra_stop} minutes after.",image_url=image)
+                        date = datetime.fromtimestamp(programming["start"]).strftime("%d.%m.%Y %H:%M")
+                        send_notification(f"Scheduled movie {movie_pretty} on the {date} with {extra_start} minutes before and {extra_stop} minutes after.",image_url=image)
                         break
                     else:
                         event_identity = '%s %s %s %s' % (
