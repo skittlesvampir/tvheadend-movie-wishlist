@@ -37,7 +37,8 @@ if __name__ == '__main__':
                             image = get_image_url(programming['image'])
 
                         date = datetime.fromtimestamp(programming["start"]).strftime("%d.%m.%Y %H:%M")
-                        send_notification(f"Scheduled movie {movie_pretty} on the {date} with {extra_start} minutes before and {extra_stop} minutes after.",image_url=image)
+                        channelName = programming["channelName"]
+                        send_notification(f"Name: {movie_pretty}\nDate: {date}\nPadding: {extra_start} minutes before and {extra_stop} minutes after\nChannel: {channelName}",image_url=image)
                         break
                     else:
                         event_identity = '%s %s %s %s' % (
