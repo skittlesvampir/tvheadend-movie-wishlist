@@ -49,27 +49,41 @@ def retrieve_tmdb_list():
         "Authorization": f"Bearer {api_bearer_token}",
     }
     
-    response = requests.get(f"https://api.themoviedb.org/3/list/{list_id}?language={language_code}", headers=headers)
+    response = requests.get(f"https://api.themoviedb.org/4/list/{list_id}?language={language_code}", headers=headers)
     if response.status_code != 200:
         send_notification("Could not query TheMovieDB: " + response.text,error=True)
         raise ConnectionError("Could not query TheMovieDB: " + response.text)
-    movie_list = response.text
-    movie_list = json.loads(movie_list)["items"]
-    movie_list = remove_non_movies_tmdb(movie_list)
-    for i, _ in enumerate(movie_list):
-        movie_list[i]["normalized_title"] = normalize_title(movie_list[i]["title"])
+    
+    movie_list_complete = []
+
+    num_pages = json.loads(response.text)["total_pages"]
+    for page in range(1, num_pages+1):
+        response = requests.get(f"https://api.themoviedb.org/4/list/{list_id}?page={page}&language={language_code}", headers=headers)
+        if response.status_code != 200:
+            send_notification("Could not query TheMovieDB: " + response.text,error=True)
+            raise ConnectionError("Could not query TheMovieDB: " + response.text)
+        
+        movie_list_page = response.text
+        movie_list_page = json.loads(movie_list_page)["results"]
+        movie_list_page = remove_non_movies_tmdb(movie_list_page)
+        
+        movie_list_complete.extend(movie_list_page)
+
+    for i, _ in enumerate(movie_list_complete):
+        movie_list_complete[i]["normalized_title"] = normalize_title(movie_list_complete[i]["title"])
+        print(movie_list_complete[i]["title"])
 
     # Both scenarios are perfectly fine but they are indicators for
     # something going wrong and I really don't want something to
     # go wrong
-    if len(movie_list) <= 0: 
+    if len(movie_list_complete) <= 0: 
         send_notification("There are no movies in the list",warning=True)
         warnings.warn("There are no movies in the list")
-    elif len(movie_list) <= 1:
+    elif len(movie_list_complete) <= 1:
         send_notification("There's only one movie in the list",warning=True)
         warnings.warn("There's only one movie in the list")
         
-    return movie_list
+    return movie_list_complete
 
 # This script only searches for movies
 def remove_non_movies_tvheadend(epg_list):
