@@ -2,6 +2,9 @@
 *tvheadend-movie-wishlist* is a program that automatically records movies from a [TheMovieDB.org](https://themoviedb.org) list to your TVHeadend server.
 It does this by pulling all the desired movies from TMDB and comparing it against your TVHeadend EPG. If it finds a match, it automatically schedules a recording and sends you a notification using [ntfy](https://ntfy.sh).
 
+## Important information
+TheMovieDB applied some (currently undocumented) changes to their API, which cause this script to only retrieve the first 20 entries from the list, which can have some pretty inconvenient consequences. This script has been updated to account for these changes, please make sure to pull the lastet version from GitHub.
+
 ## Setting it up
 
 First of all, download the code for this project:

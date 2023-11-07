@@ -71,7 +71,6 @@ def retrieve_tmdb_list():
 
     for i, _ in enumerate(movie_list_complete):
         movie_list_complete[i]["normalized_title"] = normalize_title(movie_list_complete[i]["title"])
-        print(movie_list_complete[i]["title"])
 
     # Both scenarios are perfectly fine but they are indicators for
     # something going wrong and I really don't want something to
