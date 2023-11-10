@@ -16,10 +16,14 @@ if __name__ == '__main__':
     # the user has already been notified about the inavailability of these events
     current_working_dir = Path(__file__).parent.absolute()
     ignored_events_filename = os.path.join(current_working_dir, '.ignored_events')
+
     if not os.path.exists(ignored_events_filename):
         os.mknod(ignored_events_filename)
-    ignored_events_file_handle = open(ignored_events_filename, "w+")
-    ignored_events = [x.strip() for x in ignored_events_file_handle.readlines()]
+    else:
+        with open(ignored_events_filename) as file:
+            ignored_events = [line.rstrip() for line in file]
+
+    ignored_events_file_handle = open(ignored_events_filename, "w")
 
     for movie in tmdb_movie_list:
         movie_norm = movie["normalized_title"]
@@ -50,6 +54,6 @@ if __name__ == '__main__':
                         if event_identity not in ignored_events:
                             send_notification(f"Couldn't schedule {movie_pretty} because other recordings already exist") # send notification once and only once
                             ignored_events.append(event_identity)
-                            ignored_events_file_handle.write('\n'.join(ignored_events))
 
+    ignored_events_file_handle.write('\n'.join(ignored_events))
     ignored_events_file_handle.close()
