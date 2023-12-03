@@ -34,7 +34,7 @@ def ts_make_request(ts_url,ts_data=None,ts_method='GET'):
     return ts_response
 
 def get_timers():
-    ts_response = ts_make_request('api/dvr/entry/grid_upcoming?sort=start',ts_method='GET')
+    ts_response = ts_make_request('api/dvr/entry/grid_upcoming?sort=start&limit=1000',ts_method='GET')
 
     ts_json = json.loads(ts_response.text, strict=False)
     return ts_json['entries']
