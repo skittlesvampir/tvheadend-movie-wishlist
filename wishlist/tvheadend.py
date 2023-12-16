@@ -45,10 +45,12 @@ def get_timers():
 #
 # For (hopefully) more insight on the logic of this
 # function, see 'post-it-note.jpeg'
-def is_block_empty(start_time, end_time):
+def is_block_empty(start_time, end_time, channel_uuid):
     for timer in get_timers():
         if not (end_time < timer["start_real"] or start_time > timer["stop_real"]): # overlapping :(
-            return False
+            # tvheadend can record two schedules on one tuner if they're on the same channel
+            if timer["channel"] != channel_uuid: 
+                return False
     return True
 
 def get_dvr_config_uuid(name):
@@ -116,14 +118,14 @@ def schedule_recording(programming):
     possible_paddings = [15,10,5,4,3,2,1]
 
     for padding in possible_paddings: # 20 to 5
-        if is_block_empty(programming["start"] - padding*60, programming["stop"]):
+        if is_block_empty(programming["start"] - padding*60, programming["stop"], programming["channelUuid"]):
             start = padding
             break
     else:
         return (False, 0, 0)
 
     for padding in possible_paddings:
-        if is_block_empty(programming["start"], programming["stop"] + padding*60):
+        if is_block_empty(programming["start"], programming["stop"] + padding*60, programming["channelUuid"]):
             stop = padding
             break
     else:
