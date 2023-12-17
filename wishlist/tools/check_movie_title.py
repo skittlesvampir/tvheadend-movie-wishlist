@@ -4,10 +4,11 @@ import json
 
 import tomli
 
-from .. import util
+import sys
+sys.path.append('wishlist')
 from util import normalize_title
 
-with open("../config.toml") as f:
+with open("config.toml", "rb") as f:
     toml_dict = tomli.load(f)
     
 
@@ -16,12 +17,13 @@ TMS_API_KEY = 'n829qtk58c7ym5pxdch5smup' # source: https://twitter.com/DailyNick
 movie_title_input = str(input("Enter movie title: "))
 normalized_title_input = normalize_title(movie_title_input)
 
+lang = toml_dict["language"].split('-')[0]
 data = {
     "q": movie_title_input,
     "includeAdult": True,
     "queryFields": "title",
     "entityType": "movie",
-    "titleLang": toml_dict["language"],
+    "titleLang": lang,
     "api_key": TMS_API_KEY,
 }
 response = requests.get("http://data.tmsapi.com/v1.1/programs/search", params=data)

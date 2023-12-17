@@ -30,7 +30,7 @@ def normalize_title(title):
     nfkd_form = unicodedata.normalize('NFKD', title)
     title = u"".join([c for c in nfkd_form if not unicodedata.combining(c)])
     title = re.sub(r'\(\d{4}\)', '', title)
-    title = re.sub(r'[/!@#$%^&*:\-—\'.,?]', '', title)
+    title = re.sub(r'[/!@#$%^&*:\-—–\'‘’.,?]', '', title)
     title = " ".join(title.split())
     
     return title
