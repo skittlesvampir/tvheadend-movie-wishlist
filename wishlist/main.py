@@ -28,6 +28,7 @@ if __name__ == '__main__':
     for movie in tmdb_movie_list:
         movie_norm = movie["normalized_title"]
         movie_pretty = movie["title"]
+        no_slot_available = False
         for programming in ts_movie_list:
             if movie_norm == programming["normalized_title"]:
                 if "dvrState" in programming: # dvrState only exists if programming was/is scheduled
@@ -52,8 +53,11 @@ if __name__ == '__main__':
                                 programming["stop"]
                             )
                         if event_identity not in ignored_events:
-                            send_notification(f"Couldn't schedule {movie_pretty} because other recordings already exist") # send notification once and only once
-                            ignored_events.append(event_identity)
+                            no_slot_available = True # Check each programming slot before throwing an error
+                            
+        if no_slot_available:
+            send_notification(f"Couldn't schedule {movie_pretty} because other recordings already exist") # send notification once and only once
+            ignored_events.append(event_identity)
 
     ignored_events_file_handle.write('\n'.join(ignored_events))
     ignored_events_file_handle.close()
