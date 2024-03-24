@@ -49,7 +49,8 @@ def is_block_empty(start_time, end_time, channel_uuid):
     for timer in get_timers():
         if not (end_time < timer["start_real"] or start_time > timer["stop_real"]): # overlapping :(
             # tvheadend can record two schedules on one tuner if they're on the same channel
-            if timer["channel"] != channel_uuid: 
+            # schedules that are disabled can be ignored
+            if timer["channel"] != channel_uuid and timer["enabled"]: 
                 return False
     return True
 
@@ -140,7 +141,7 @@ def schedule_recording(programming):
     }
     
     ts_response = ts_make_request('api/dvr/entry/create_by_event',ts_data=data,ts_method='POST')
-    recording_uuid = json.loads(ts_response.text)["uuid"]
+    recording_uuid = ts_response.json()["uuid"]
     
     add_padding_and_year_to_recording(recording_uuid, start, stop)
     
