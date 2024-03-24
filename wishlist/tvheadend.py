@@ -39,19 +39,64 @@ def get_timers():
     ts_json = json.loads(ts_response.text, strict=False)
     return ts_json['entries']
 
+# Return the UUID of the transponder (mux) of a channel
+# Usually, several channels share the same transponder
+def get_channel_mux_uuid(channel_uuid):
+    data = {
+        "all": 1,
+    }
+
+    ts_response = ts_make_request('api/channel/grid', ts_method='POST', ts_data=data)
+    ts_json = ts_response.json() # list of every mapped channel
+
+    channel_service_uuid = None
+    for channel in ts_json["entries"]:
+        if channel["uuid"] == channel_uuid:
+            channel_service_uuid = channel["services"][0] # multiple services for the same channel currently unsupported
+            break
+    
+    data = {
+        "limit": 100000,
+    }
+    ts_response = ts_make_request('api/mpegts/service/grid', ts_method='POST', ts_data=data)
+    ts_json = ts_response.json() # list of every 'service'
+
+    
+    for service in ts_json["entries"]:
+        if service["uuid"] == channel_service_uuid:
+            return service["multiplex_uuid"]
+        
+    print("service mux not found")
+        
+    return ""
+
 # Assuming there is only one tuner available
 # Expand this section if there's the need
 # for more tuners
 #
 # For (hopefully) more insight on the logic of this
 # function, see 'post-it-note.jpeg'
+#
+# Even with only one tuner, I was able to play 10
+# different streams at the same time, because they were
+# on the same transponder (mux), which is the frequency
+# over which they are sent. Your mileage with this may
+# vary, so you have to manually enable it in your config.toml.
 def is_block_empty(start_time, end_time, channel_uuid):
     for timer in get_timers():
         if not (end_time < timer["start_real"] or start_time > timer["stop_real"]): # overlapping :(
+
             # tvheadend can record two schedules on one tuner if they're on the same channel
             # schedules that are disabled can be ignored
-            if timer["channel"] != channel_uuid and timer["enabled"]: 
-                return False
+            with open("config.toml", "rb") as f:
+                toml_dict = tomli.load(f)
+            
+            if toml_dict["tvheadend"]["mux_multiple_channels"]:
+                if get_channel_mux_uuid(timer["channel"]) != get_channel_mux_uuid(channel_uuid) and timer["enabled"]:
+                    return False
+            else:
+                if timer["channel"] != channel_uuid and timer["enabled"]: 
+                    return False
     return True
 
 def get_dvr_config_uuid(name):

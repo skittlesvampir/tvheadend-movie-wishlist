@@ -79,5 +79,13 @@ Reliability was a big concern when designining this program. Most movies aren't 
 
 If you want to make sure, that a movie will get matched properly, use the script 'wishlist/tools/check_movie_title.py' which matches TMDB movies with Gracenote movie titles. If this script reports a mismatch, please file an issue so I can fix it.
 
+## Multiple streams simultaneously
+I only have one single tuner, so this script assumes that you can't record different channels at the same time. However, if the channels are on the same frequency (mux/transponder), then you can still stream them at the same time, even with only one tuner available.
+
+To test this, I recommend going into your TVHeadend settings under "Configuration" > "DVB Inputs" > "Services" and looking for channels with the same "Mux". Play two or more at the same time. If all can be played back in parallel, your tuner supports it and you can set `mux_multiple_channels` to `true` in your `config.toml`.
+
+Note that the channels that share a frequency are usually from the same network, so it's unlikely that e.g. Prosieben would be on same frequency as the Disney Channel.
+![Ten simultaneous streams]('10 Recordings on the Same Mux using Only One Tuner.png' "Ten simultaneous streams")
+
 ## Support
 If you have problems setting this program up, don't hesitate to file an issue.

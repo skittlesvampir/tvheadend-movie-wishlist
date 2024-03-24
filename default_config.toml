@@ -8,6 +8,8 @@ server = "https://tv.head.end:9981" # no trailing slash
 username = "admin"
 password = "yourpassword"
 config = "recordedbymoviewishlist" # name of the recording configuration
+mux_multiple_channels = false # Can you play more than one channel on the same tuner
+                              # if they are on the same mux?
 
 # Create an API token under: https://www.themoviedb.org/settings/api
 [themoviedb]
