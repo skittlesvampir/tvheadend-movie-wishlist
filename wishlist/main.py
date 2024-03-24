@@ -28,36 +28,39 @@ if __name__ == '__main__':
     for movie in tmdb_movie_list:
         movie_norm = movie["normalized_title"]
         movie_pretty = movie["title"]
-        no_slot_available = False
-        for programming in ts_movie_list:
-            if movie_norm == programming["normalized_title"]:
-                if "dvrState" in programming: # dvrState only exists if programming was/is scheduled
+        programming = None
+        already_scheduled = False
+        for ts_programming in ts_movie_list:
+            if movie_norm == ts_programming["normalized_title"]:
+                programming = ts_programming
+
+                if "dvrState" in ts_programming: # dvrState only exists if programming was/is scheduled
                     print(f'"{movie_pretty}" is already scheduled')
+                    already_scheduled = True
                     break
-                else:
-                    success, extra_start, extra_stop = schedule_recording(programming)
-                    if success:
-                        image = None
-                        if 'image' in programming:
-                            image = get_image_url(programming['image'])
+                
 
-                        date = datetime.fromtimestamp(programming["start"]).strftime("%d.%m.%Y %H:%M")
-                        channelName = programming["channelName"]
-                        send_notification(f"Name: {movie_pretty}\nDate: {date}\nPadding: {extra_start} minutes before and {extra_stop} minutes after\nChannel: {channelName}",image_url=image)
-                        break
-                    else:
-                        event_identity = '%s %s %s %s' % (
-                                programming["eventId"],
-                                programming["channelUuid"],
-                                programming["start"],
-                                programming["stop"]
-                            )
-                        if event_identity not in ignored_events:
-                            no_slot_available = True # Check each programming slot before throwing an error
+        if programming != None and not already_scheduled:
+            success, extra_start, extra_stop = schedule_recording(programming)
+            if success:
+                image = None
+                if 'image' in programming:
+                    image = get_image_url(programming['image'])
+
+                date = datetime.fromtimestamp(programming["start"]).strftime("%d.%m.%Y %H:%M")
+                channelName = programming["channelName"]
+                send_notification(f"Name: {movie_pretty}\nDate: {date}\nPadding: {extra_start} minutes before and {extra_stop} minutes after\nChannel: {channelName}",image_url=image)
+            else:
+                event_identity = '%s %s %s %s' % (
+                        programming["eventId"],
+                        programming["channelUuid"],
+                        programming["start"],
+                        programming["stop"]
+                    )
+                if event_identity not in ignored_events:
+                    send_notification(f"Couldn't schedule {movie_pretty} because other recordings already exist") # send notification once and only once
+                    ignored_events.append(event_identity)
+
                             
-        if no_slot_available:
-            send_notification(f"Couldn't schedule {movie_pretty} because other recordings already exist") # send notification once and only once
-            ignored_events.append(event_identity)
-
     ignored_events_file_handle.write('\n'.join(ignored_events))
     ignored_events_file_handle.close()
