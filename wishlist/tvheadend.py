@@ -92,7 +92,7 @@ def is_block_empty(start_time, end_time, channel_uuid):
                 toml_dict = tomli.load(f)
             
             if toml_dict["tvheadend"]["mux_multiple_channels"]:
-                if get_channel_mux_uuid(timer["channel"]) != get_channel_mux_uuid(channel_uuid) and timer["enabled"]:
+                if (get_channel_mux_uuid(timer["channel"]) != get_channel_mux_uuid(channel_uuid)) and timer["enabled"]:
                     return False
             else:
                 if timer["channel"] != channel_uuid and timer["enabled"]: 
