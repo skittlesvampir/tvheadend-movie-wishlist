@@ -85,7 +85,9 @@ I only have one single tuner, so this script assumes that you can't record diffe
 To test this, I recommend going into your TVHeadend settings under "Configuration" > "DVB Inputs" > "Services" and looking for channels with the same "Mux". Play two or more at the same time. If all can be played back in parallel, your tuner supports it and you can set `mux_multiple_channels` to `true` in your `config.toml`.
 
 Note that the channels that share a frequency are usually from the same network, so it's unlikely that e.g. Prosieben would be on same frequency as the Disney Channel.
-![Ten simultaneous streams]('10 Recordings on the Same Mux using Only One Tuner.png' "Ten simultaneous streams")
+
+![Ten simultaneous streams](https://raw.githubusercontent.com/skittlesvampir/tvheadend-movie-wishlist/main/10%20Recordings%20on%20the%20Same%20Mux%20using%20Only%20One%20Tuner.png "Ten simultaneous streams")
+*Ten simultaneous streams on the same tuner*
 
 ## Support
 If you have problems setting this program up, don't hesitate to file an issue.
